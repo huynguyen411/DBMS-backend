@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Country;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -16,10 +17,11 @@ class CountrySeeder extends Seeder
      */
     public function run()
     {
-        foreach ($this->arr as  $value) {
-            DB::table('countries')->insert([
-                'country_name' => $value["country_name"],
-            ]);
-        }
+        // foreach ($this->arr as  $value) {
+        //     DB::col('countries')->insert([
+        //         'country_name' => $value["country_name"],
+        //     ]);
+        // }
+        Country::factory(10)->create();
     }
 }

@@ -26,7 +26,7 @@ class CheckIdUser implements Rule
      */
     public function passes($attribute, $value)
     {
-        if (User::where('id', $value)->count() == 0) {
+        if (User::where('_id', $value)->count() == 0) {
             return false;
         }
         return true;

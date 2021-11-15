@@ -22,10 +22,8 @@ class ManageUserController extends Controller
 
 
         foreach ($list as $key => $user) {
-            $stt = BorrowingStatus::where('borrowing_status_id', $user->status_id)->get();
             $book = Book::where('book_id', $user->book_id)->get();
             $userinfo = User::where('id', $user->borrower_id)->get();
-            $list[$key]->status = $stt;
             $list[$key]->book = $book;
             $list[$key]->user = $userinfo;
         }

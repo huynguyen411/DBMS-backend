@@ -176,6 +176,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         EloquentFilter\ServiceProvider::class,
+        Jenssegers\Mongodb\MongodbServiceProvider::class,
 
         //jwt
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,

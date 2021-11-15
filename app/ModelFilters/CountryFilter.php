@@ -16,14 +16,14 @@ class CountryFilter extends ModelFilter
     public $relations = [];
     protected $drop_id = false;
 
-    public function countryName($country_name)
+    public function name($country_name)
     {
-        $this->whereLike('country_name', $country_name);
+        $this->whereLike('name', $country_name);
     }
 
     public function countryId($country_id)
     {
-        $this->where('country_id', $country_id);
+        $this->where('_id', $country_id);
     }
   
 

@@ -3,15 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-// use Illuminate\Foundation\Http\FormRequest;
-// use App\Http\Requests\TestLoginRequest;
+ use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Http\Requests\ChangePasswordRequest;
-
 use Illuminate\Support\Facades\Hash;
-
-
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Validator;

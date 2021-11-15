@@ -1019,15 +1019,16 @@ class TypeSeeder extends Seeder
      */
     public function run()
     {
-        foreach ($this->arr as  $value) {
-            // DB::table('types')->insert([
+        // foreach ($this->arr as  $value) {
+        //     // DB::table('types')->insert([
 
-            //     "name" => $value["name"],
-            //     'code' => $value["code"],
+        //     //     "name" => $value["name"],
+        //     //     'code' => $value["code"],
 
-            // ]);
+        //     // ]);
 
-            Type::create($value);
-        }
+        //     Type::create($value);
+        // }
+        Type::factory(10)->create();
     }
 }

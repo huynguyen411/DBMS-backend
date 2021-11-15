@@ -4,20 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Book;
-use App\Models\BorrowingBook;
 use App\Models\Type;
 use App\Models\Country;
 use App\Http\Requests\BookRequest;
 use App\Http\Requests\BookUpdateRequest;
+use App\Models\Rental;
 
-use Illuminate\Support\Facades\Storage;
-use App\Http\Resources\Book as BookResource;
 use Illuminate\Support\Facades\File;
-use mysqli;
-use SplQueue;
 use GuzzleHttp\Client;
-
-use function GuzzleHttp\Promise\queue;
 
 class BookController extends Controller
 {
@@ -30,19 +24,9 @@ class BookController extends Controller
 
     public function index(Request $request)
     {
+        $books = Book::with('type', 'country')->filter($request->all())->get();
 
-
-        $books = Book::filter($request->all())->get();
-        $types = Type::all();
-        foreach ($books as $book) {
-            // $type = $this->getTypeOfBook($book, $types);
-            // $book->type = $type;
-            $book->borrowing = BorrowingBook::where([['book_id', $book->book_id], ['status_id', 1]])->count() != 0;
-        }
-
-        return response()->json([
-            'books' => $books,
-        ]);
+        return $books;
     }
 
     public function store(BookRequest $request)
@@ -67,9 +51,6 @@ class BookController extends Controller
         ));
 
         $types = Type::all();
-
-        // $type = $this->getTypeOfBook($book, $types);
-        // $book->type = $type;
         return response()->json([
             'book' => $book,
         ], 200);
@@ -78,25 +59,20 @@ class BookController extends Controller
 
     public function show($id)
     {
-        if (Book::where('book_id', $id)->count() == 0) {
+        if (Book::where('_id', $id)->count() == 0) {
             return response()->json([
                 'status' => 'error',
                 'messenger' => 'Sách không tồn tại'
             ], 422);
         }
 
-        $book = Book::where('book_id', $id)->first();
-        $types = Type::all();
-        // $type = $this->getTypeOfBook($book, $types);
-        // $book->type = $type;
-
+        $book = Book::where('_id', $id)->with('type', 'country')->first();        
         return $book;
     }
 
     public function update(BookUpdateRequest $request, $id)
     {
-
-        if (Book::where('book_id', $id)->count() == 0) {
+        if (Book::where('_id', $id)->count() == 0) {
             return response()->json([
                 'status' => 'error',
                 'messenger' => 'Sách không tồn tại'
@@ -114,19 +90,15 @@ class BookController extends Controller
             if ($arrImage['status'] == 'ok') {
                 $urlBookImage = $arrImage['url'];
 
-                $book = Book::where('book_id', $id)
+                $book = Book::where('_id', $id)
                     ->update(
                         array_merge($request->only(
-                            'name_book',
+                            'name',
                             'type_id',
                             'author',
-                            'translator',
                             'publisher',
-                            'publication_date',
+                            'publication_year',
                             'country_id',
-                            'price',
-                            'isbn',
-                            'review',
                             'book_image'
                         ), ['book_image' => $urlBookImage])
 
@@ -136,20 +108,16 @@ class BookController extends Controller
             $book = Book::where('book_id', $id)
                 ->update(
                     $request->only(
-                        'name_book',
+                        'name',
                         'type_id',
                         'author',
-                        'translator',
                         'publisher',
-                        'publication_date',
-                        'price',
-                        'isbn',
-                        'review',
+                        'publication_year',
+                        'country_id',
+                        'book_image'
                     )
                 );
         }
-
-
 
         if (!$book) {
             return response()->json([
@@ -158,7 +126,7 @@ class BookController extends Controller
             ], 400);
         }
 
-        $bookinfo = Book::where('book_id', $id)->first();
+        $bookinfo = Book::where('_id', $id)->first();
 
         $types = Type::all();
         // $type = $this->getTypeOfBook($bookinfo, $types);
@@ -176,7 +144,7 @@ class BookController extends Controller
 
     public function destroy($id)
     {
-        $countBook = Book::where('book_id', $id)->count();
+        $countBook = Book::where('_id', $id)->count();
         if ($countBook == 0) {
             return response()->json([
                 'status' => 'error',
@@ -184,42 +152,12 @@ class BookController extends Controller
             ], 400);
         }
 
-        // $types = Type::all();
-        // $type = $this->getTypeOfBook($book, $types);
-        // $book->type = $type;
-        Book::where('book_id', $id)->delete();
-        BorrowingBook::where('book_id', $id)->delete();
+        Book::where('_id', $id)->delete();
         return response()->json([
             'status' => 'ok',
             'messenger' => 'Xoá sách thành công'
         ], 200);
     }
-
-
-    // lấy sách phát hành theo ngày mới nhất
-    public function getLatestBooks(Request $request)
-    {
-        $limit = 10;
-        if ($request->has('limit')) {
-            $limit = $request->get('limit');
-        }
-
-        $books = Book::filter($request->all())->orderBy('publication_date', 'desc')->limit($limit)->get();
-        $types = Type::all();
-        foreach ($books as $book) {
-            // $type = $this->getTypeOfBook($book, $types);
-            // $book->type = $type;
-            $book->borrowing = BorrowingBook::where([['book_id', $book->book_id], ['status_id', 1]])->count() != 0;
-        }
-        return response()->json(
-            [
-                'orderBy' => 'desc',
-                'books' => $books
-            ],
-            200
-        );
-    }
-
 
     // lấy list book đc mượn nhiều nhất
     public function topBorrowing(Request $request)
@@ -228,7 +166,7 @@ class BookController extends Controller
         if ($request->has('limit')) {
             $limit = $request->get('limit');
         }
-        $books = BorrowingBook::select(BorrowingBook::raw('COUNT(borrowing_books.book_id) as count, borrowing_books.book_id'))
+        $books = Rental::select(Rental::raw('COUNT(borrowing_books.book_id) as count, borrowing_books.book_id'))
             ->groupBy('borrowing_books.book_id')
             ->orderByDesc('count')
             ->limit($limit)->get();
@@ -237,7 +175,7 @@ class BookController extends Controller
         // $types = Type::all();
         foreach ($books as $book) {
             $bookinfo = Book::where('book_id', $book->book_id)->first();
-            $bookinfo->borrowing = BorrowingBook::where([['book_id', $book->book_id],['status_id', 1]])->count() != 0;
+            $bookinfo->borrowing = Rental::where([['book_id', $book->book_id],['status_id', 1]])->count() != 0;
 
             // $type = $this->getTypeOfBook($bookinfo, $types);
             // $bookinfo->type = $type;
@@ -251,25 +189,6 @@ class BookController extends Controller
             ],
             200
         );
-    }
-
-    public function getTypeOfBook($book, $types)
-    {
-
-
-        $type3 = $types->find($book->type_id);
-        $type2 = $types->where('type_id', $type3->parent_id)->first();
-        $type1 = $types->where('type_id', $type2->parent_id)->first();
-        $type = (object) [];
-        if ($type3->code % 100 < 10) {
-            $type->level_3 = $type3;
-            $type->level_1 = $type2;
-        } else {
-            $type->level_1 = $type1;
-            $type->level_2 = $type2;
-            $type->level_3 = $type3;
-        }
-        return $type;
     }
 
     public function uploadImage($urlFile, $nameFile)

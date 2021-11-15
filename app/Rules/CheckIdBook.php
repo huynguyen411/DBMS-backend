@@ -26,7 +26,7 @@ class CheckIdBook implements Rule
      */
     public function passes($attribute, $value)
     {
-        if (Book::where('book_id', $value)->count() == 0) {
+        if (Book::where('_id', $value)->count() == 0) {
             return false;
         }
         return true;

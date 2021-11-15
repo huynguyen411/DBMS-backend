@@ -15,19 +15,12 @@ class TypeFilter extends ModelFilter
     public $relations = [];
     protected $drop_id = false;
     public function typeId($typeId){
-        return $this->where('type_id', $typeId);
+        return $this->where('_id', $typeId);
     }
     public function code($code){
         return $this->where('code', $code);
     }
     public function name($name){
         return $this->where('name', 'LIKE', "%$name%");
-    }
-    public function parentId($parentId){
-        return $this->where('parent_id', $parentId);
-    }
-    public function level($level){
-        return $this->where('level', $level);
-    }
-    
+    }    
 }

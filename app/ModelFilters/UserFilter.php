@@ -13,27 +13,32 @@ class UserFilter extends ModelFilter
      * @var array
      */
     public $relations = [];
-    public function id($id)
+    public function userId($id)
     {
-        return $this->whereLike('id', $id);
+        return $this->where('_id', $id);
     }
 
     public function name($name)
     {
-        return $this->whereLike('name', $name);
+        return $this->whereLike('name', "%$name%");
     }
 
 
     public function address($address)
     {
-        return $this->whereLike('address', 'like', $address);
+        return $this->whereLike('address', 'like', "%$address%");
     }
 
     public function email($email)
     {
-        return $this->whereLike('email', $email);
+        return $this->whereLike('email', "%$email%");
     }
 
+    public function role($roleId)
+    {
+        return $this->where('role_id', $roleId);
+    }
+    
     public function createdAt($createdAt)
     {
         return $this->whereBetween('created_at', [$createdAt[0], $createdAt[1]]);

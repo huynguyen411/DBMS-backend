@@ -3,12 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\Model;
 
 use EloquentFilter\Filterable;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Jenssegers\Mongodb\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -17,8 +17,7 @@ class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable, Filterable;
 
-    protected $table = "users";
-    protected $primaryKey = 'id';
+    protected $collection = "users";
 
     /**
      * The attributes that are mass assignable.
@@ -53,26 +52,15 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    public function borrowing_books()
-    {
-        return $this->hasMany(BorrowingBook::class, 'borrower_id', 'id');
-    }
-
-    public function comments()
-    {
-        return $this->hasMany(Comment::class, 'borrower_id', 'id');
-    }
-
     public function role()
     {
-        return $this->belongsTo(Role::class, 'role_id', 'role_id');
+        return $this->belongsTo(Role::class);
     }
 
-    public function books()
+    public function rentals()
     {
-        return $this->belongsToMany(Book::class, 'comments');
+        return $this->hasMany(Rental::class);
     }
-
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
@@ -91,8 +79,6 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [
-            // 'id' => $this->id,
-            // 'code_role' => Role::find($this->role_id)->value('code'),
             'role_id' =>$this->role_id
         ];
     }

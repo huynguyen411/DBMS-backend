@@ -4,19 +4,20 @@ namespace App\Models;
 
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\HybridRelations;
 
 class Type extends Model
 {
     use Filterable;
     use HasFactory;
+    use HybridRelations;
 
-    protected $table = "types";
-    protected $primaryKey = 'type_id';
+    protected $collection = "types";
     public $timestamps = false;
 
     public function books()
     {
-        return $this->hasMany(Book::class, 'type_id', 'type_id');
+        return $this->hasMany(Book::class);
     }
 }

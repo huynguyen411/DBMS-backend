@@ -143,18 +143,19 @@ class BookSeeder extends Seeder
     public function run()
     {
         //
-        foreach ($this->arrInfoBook as  $value) {
-            // DB::table('books')->insert([
-            //     'name_book' => $value["name"],
-            //     "type_id" => $value["type_id"],
-            //     "author" => $value["author"],
-            //     "translator" => $value["translator"],
-            //     "price" => $value["price"],
-            //     "review" => $value["review"],
-            //     "isbn" => $value["isbn"],
-            // ]);
-            Book::create($value);
+        // foreach ($this->arrInfoBook as  $value) {
+        //     // DB::table('books')->insert([
+        //     //     'name_book' => $value["name"],
+        //     //     "type_id" => $value["type_id"],
+        //     //     "author" => $value["author"],
+        //     //     "translator" => $value["translator"],
+        //     //     "price" => $value["price"],
+        //     //     "review" => $value["review"],
+        //     //     "isbn" => $value["isbn"],
+        //     // ]);
+        //     Book::create($value);
 
-        }
+        // }
+        Book::factory(100)->create();
     }
 }
