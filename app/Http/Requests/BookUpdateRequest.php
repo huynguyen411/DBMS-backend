@@ -7,7 +7,6 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
-use App\Rules\CheckIdBook;
 use App\Rules\CheckIdType;
 use App\Rules\CheckIdCountry;
 

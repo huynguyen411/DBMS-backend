@@ -22,7 +22,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'logout']]);
     }
 
     // use LoginRequest;
@@ -55,7 +55,10 @@ class AuthController extends Controller
     {
         $user = User::create(array_merge(
             $request->validated(),
-            ['password' => bcrypt($request->password)]
+            [
+                'password' => bcrypt($request->password),
+                'role_id' => 2
+            ],
         ));
 
         return response()->json([
@@ -65,7 +68,25 @@ class AuthController extends Controller
         ], 201);
     }
 
+    public function updateRole($userId)
+    {
+        $check = User::where([
+            ['_id', '=', $userId]
+        ])->update(['role_id' => 1]);
 
+        if (!$check) {
+            return response()->json([
+                'status' => 'error',
+                'messenger' => 'Cập nhật vai trò thất bại'
+            ], 422);
+        }
+
+        return response()->json([
+            'status' => 'ok',
+            'messenger' => 'Cập nhật vai trò thành công'
+        ], 200);
+    }
+    
     /**
      * Log the user out (Invalidate the token).
      *

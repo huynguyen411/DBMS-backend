@@ -18,14 +18,11 @@ class BookController extends Controller
     public function __construct()
     {
         $this->middleware(['auth:api', 'check-role'], ['only' => ['store', 'update', 'destroy']]);
-        // $this->middleware('check-role', ['only' => ['index']]);
-
     }
 
     public function index(Request $request)
     {
         $books = Book::with('type', 'country')->filter($request->all())->get();
-
         return $books;
     }
 

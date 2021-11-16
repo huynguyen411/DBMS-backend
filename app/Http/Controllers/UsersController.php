@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class UsersController extends Controller
 {
@@ -11,9 +12,10 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $users = User::with('role', 'country')->filter($request->all())->get();
+        return $users;
     }
 
     /**
@@ -45,7 +47,15 @@ class UsersController extends Controller
      */
     public function show($id)
     {
-        //
+        if (User::where('_id', $id)->count() == 0) {
+            return response()->json([
+                'status' => 'error',
+                'messenger' => 'Tài khoản không tồn tại'
+            ], 422);
+        }
+
+        $user = User::where('_id', $id)->with('role')->first();
+        return $user;
     }
 
     /**

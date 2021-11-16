@@ -12,7 +12,7 @@ class RentalController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['only' => ['store', 'returnBook', 'index']]);
+        $this->middleware('auth:api', ['only' => ['returnBook', 'index']]);
     }
 
     //get the history rental by current user
@@ -25,20 +25,13 @@ class RentalController extends Controller
         return $rentals;
     }
 
-    //admin: create an rental
+    // create an rental
     public function store(RentalRequest $request)
     {
         $check = $this->checkBorrowing($request->get('book_id'))->getData()->borrowing;
 
-        // if ($check) {
-        //     return response()->json([
-        //         'status' => 'error',
-        //         'messenger' => 'Hiện tại sách đang được mượn',
-        //     ], 422);
-        // }
         $create_bb = Rental::create(array_merge(
             $request->only('book_id', 'rental_date', 'promissory_date', 'user_id'),
-            //['status_id' => 1]
         ));
         return response()->json([
             'status' => 'ok',
@@ -88,13 +81,6 @@ class RentalController extends Controller
         $checkBorrowing = Rental::where([
             ['_id', '=', $id]
         ])->count();
-
-        // if ($checkBorrowing == 1) {
-        //     return response()->json([
-        //         'status' => 'error',
-        //         'messenger' => 'Trả sách thất bại'
-        //     ], 422);
-        // }
 
         $check = Rental::where([
             ['_id', '=', $id]
