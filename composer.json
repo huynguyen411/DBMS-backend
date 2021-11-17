@@ -6,16 +6,16 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "ext-mongodb": "*",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "jenssegers/mongodb": "^3.8",
         "laravel/framework": "^8.40",
         "laravel/tinker": "^2.5",
+        "mongodb/mongodb": "^1.9",
         "tucker-eric/eloquentfilter": "^3.0",
-        "tymon/jwt-auth": "^1.0",
-        "ext-mongodb": "*",
-        "mongodb/mongodb": "^1.9.0"
+        "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
@@ -24,7 +24,8 @@
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^9.3.3",
-        "ext-mongodb": "*"
+        "ext-mongodb": "*",
+        "mongodb/mongodb": "^1.9"
     },
     "autoload": {
         "psr-4": {
