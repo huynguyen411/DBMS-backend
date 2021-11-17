@@ -69,7 +69,7 @@ Route::prefix('v1')->group(function () {
 
     //borrowing-book
     Route::prefix('borrowing-book')->group(function () {
-        Route::get('check/{id}', [BorrowingBookController::class, 'checkBorrowing']);// sách đang được mượn hay k
+        Route::get('check/{id}', [RentalController::class, 'checkBorrowing']);// sách đang được mượn hay k
         Route::get('/', [RentalController::class, 'index']); // danh sách mượn dành cho user
     });
 
@@ -82,9 +82,9 @@ Route::prefix('v1')->group(function () {
         
         Route::prefix('borrowing-book')->group(function () {
             
-            Route::post('/', [BorrowingBookController::class, 'store']);
-            Route::delete('/{id}', [BorrowingBookController::class, 'destroy']);
-            Route::get('return-book/{borrowing_book_id}', [BorrowingBookController::class, 'returnBook']);
+            Route::post('/', [RentalController::class, 'store']);
+            Route::delete('/{id}', [RentalController::class, 'destroy']);
+            Route::get('return-book/{borrowing_book_id}', [RentalController::class, 'returnBook']);
         });
     });
 
