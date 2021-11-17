@@ -15,8 +15,7 @@
         "mongodb/mongodb": "^1.10",
         "tucker-eric/eloquentfilter": "^3.0",
         "tymon/jwt-auth": "^1.0",
-        "ext-mongo": "*",
-        "alcaeus/mongo-php-adapter": "1.1.11"
+        "ext-mongo": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
