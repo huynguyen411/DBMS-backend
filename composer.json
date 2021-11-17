@@ -14,7 +14,7 @@
         "laravel/tinker": "^2.5",
         "tucker-eric/eloquentfilter": "^3.0",
         "tymon/jwt-auth": "^1.0",
-        "ext-mongodb": "^1.1.0"
+        "ext-mongodb": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
