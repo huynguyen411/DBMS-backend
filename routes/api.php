@@ -61,16 +61,11 @@ Route::prefix('v1')->group(function () {
         Route::post('/{book}', [App\Http\Controllers\BookController::class, 'update']);
         Route::get('/top-borrowing', [App\Http\Controllers\BookController::class, 'topBorrowing']);
         Route::get('/get-latest-books', [App\Http\Controllers\BookController::class, 'getLatestBooks']);
-        Route::get('/get-latest-books', [App\Http\Controllers\BookController::class, 'getLatestBooks']);
-        Route::get('/get-latest-books', [App\Http\Controllers\BookController::class, 'getLatestBooks']);
     });
     Route::apiResource('book', BookController::class);
 
-
-
     //borrowing-book
     Route::prefix('borrowing-book')->group(function () {
-        Route::get('check/{id}', [RentalController::class, 'checkBorrowing']);// sách đang được mượn hay k
         Route::get('/', [RentalController::class, 'index']); // danh sách mượn dành cho user
     });
 
