@@ -34,8 +34,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
-
 Route::prefix('v1')->group(function () {
     Route::group([
         'middleware' => 'api',
@@ -52,6 +50,7 @@ Route::prefix('v1')->group(function () {
 
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/logout', [AuthController::class, 'logout']);
+        Route::post('/update-role', [AuthController::class, 'updateRole']);
         Route::post('/refresh-token', [AuthController::class, 'refresh']);
         Route::get('/user-profile', [AuthController::class, 'userProfile']);
         Route::post('/change-password', [AuthController::class, 'changePassword']);
@@ -61,6 +60,8 @@ Route::prefix('v1')->group(function () {
     Route::prefix('book')->group(function () {
         Route::post('/{book}', [App\Http\Controllers\BookController::class, 'update']);
         Route::get('/top-borrowing', [App\Http\Controllers\BookController::class, 'topBorrowing']);
+        Route::get('/get-latest-books', [App\Http\Controllers\BookController::class, 'getLatestBooks']);
+        Route::get('/get-latest-books', [App\Http\Controllers\BookController::class, 'getLatestBooks']);
         Route::get('/get-latest-books', [App\Http\Controllers\BookController::class, 'getLatestBooks']);
     });
     Route::apiResource('book', BookController::class);
@@ -80,11 +81,11 @@ Route::prefix('v1')->group(function () {
         Route::get('get-borrowing', [ManageUserController::class, 'getBorrowing']); // danh sách mượn
         Route::get('statistics-borrowing-book', [ManageUserController::class, 'statisticsBorrowingBook']);
         
-        Route::prefix('borrowing-book')->group(function () {
+        Route::prefix('rental-book')->group(function () {
             
             Route::post('/', [RentalController::class, 'store']);
-            Route::delete('/{id}', [RentalController::class, 'destroy']);
-            Route::get('return-book/{borrowing_book_id}', [RentalController::class, 'returnBook']);
+            Route::delete('/{_id}', [RentalController::class, 'destroy']);
+            Route::get('return-book/{_id}', [RentalController::class, 'returnBook']);
         });
     });
 
