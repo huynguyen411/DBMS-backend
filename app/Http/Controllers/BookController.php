@@ -29,25 +29,11 @@ class BookController extends Controller
     public function store(BookRequest $request)
     {
         $urlBookImage = 'https://i.ibb.co/rdhND5D/image-book.png';
-        if ($request->hasFile('book_image')) {
-            $file = $request->book_image;
-            $urlFile = $file->getRealPath();
-            $nameFile = $file->getClientOriginalName();
-            $arrImage = $this->uploadImage($urlFile, $nameFile);
-
-            if ($arrImage['status'] == 'ok') {
-                $urlBookImage = $arrImage['url'];
-            }
-        } else {
-            // echo 'loi';
-        }
-
         $book = Book::create(array_merge(
-            $request->except('book_image'),
+            $request->toArray(),
             ['book_image' => $urlBookImage]
         ));
 
-        $types = Type::all();
         return response()->json([
             'book' => $book,
         ], 200);

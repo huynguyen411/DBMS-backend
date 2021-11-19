@@ -32,16 +32,10 @@ class BookRequest extends FormRequest
     {
         
         return [
-            'type_id' => ['required', new CheckIdType],
-            'name_book' => 'required',
+            'name' => 'required',
             'author' => 'required',
-            'translator' => 'max:100',
             'publisher' => 'max:100',
-            'publication_date' => 'date',
-            'price' => 'gte:0',
-            'book_image' => 'image|mimes:jpeg,png,jpg|max:2048',
-            'country_id' => 'integer|min:1|max:195'
-                      
+            'publication_year' => 'integer',
         ];
     }
 
