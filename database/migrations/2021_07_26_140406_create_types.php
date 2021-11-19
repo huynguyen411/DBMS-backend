@@ -15,7 +15,7 @@ class CreateTypes extends Migration
     {
         Schema::create('types', function (Blueprint $table) {
             $table->id();
-            $table->string('code',5);
+            $table->string('code',4);
             $table->string('name', 200);
         });
     }

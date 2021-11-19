@@ -14,15 +14,14 @@ class CreateUsers extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id('user_id');
-            $table->unsignedTinyInteger('role_id')->default(1);
+            $table->id();
+            $table->unsignedTinyInteger('role_id');
             $table->string('name', 101);
             $table->string('address', 101)->default('unknown');
             $table->string('email', 101)->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->string('image_avatar',100)->nullable();
             $table->timestamps();
         });
     }
