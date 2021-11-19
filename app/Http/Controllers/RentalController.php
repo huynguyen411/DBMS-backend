@@ -36,6 +36,14 @@ class RentalController extends Controller
         $payload = auth()->payload();
         $user_id = $payload->get('sub');
 
+        $checkBorrowing = Rental::where('user_id', '=', $user_id)->whereNull('return_date')->count();
+        if (!$checkBorrowing){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'trả sách đi rồi hẵng mượn',
+            ], 422);
+        }
+        
         $date = date('m/d/Y h:i:s a', time());
         $currentDateTime = Carbon::now();
         $daysToAdd = 14;
@@ -46,7 +54,8 @@ class RentalController extends Controller
             [
                 'user_id' => $user_id,
                 'rental_date' => date('Y/m/d h:i:s', time()),
-                'promissory_date' => date('Y/m/d h:i:s', $date->timestamp)
+                'promissory_date' => date('Y/m/d h:i:s', $date->timestamp),
+                'return_date' => null
             ]
         ));
        

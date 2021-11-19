@@ -72,6 +72,7 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['auth'])->group(function () {
         Route::prefix('manage')->group(function (){
             Route::get('get-user', [ManageUserController::class, 'getUser']); // danh sách user
+            Route::delete('delete/{_id}', [ManageUserController::class, 'destroy']); // xóa user
             Route::get('get-borrowing', [ManageUserController::class, 'getBorrowing']); // danh sách mượn
             Route::get('statistics-borrowing-book', [ManageUserController::class, 'statisticsBorrowingBook']);
         });
