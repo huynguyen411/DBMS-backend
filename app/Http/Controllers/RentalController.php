@@ -12,24 +12,27 @@ class RentalController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['only' => ['returnBook', 'index']]);
+        $this->middleware(['auth:api', 'check-role'], ['only' => ['returnBook', 'index']]);
     }
 
     //get the history rental by current user
-    public function getHistoryRentalByCurrentUser()
+    public function getHistoryRental(RentalRequest $request)
     {
         $payload = auth()->payload();
         $user_id = $payload->get('sub');
-
-        $rentals = Rental::where('user_id', $user_id)->get();
+        $roleId = $payload->get('role_id');
+        if ($roleId == 2) {
+            $rentals = Rental::with('user', 'book')->where('user_id', $user_id)->get();
+        }
+        else {
+            $rentals = Rental::with('user', 'book')->filter($request->all())->get();
+        }
         return $rentals;
     }
 
     // create an rental
     public function store(RentalRequest $request)
     {
-        $check = $this->checkBorrowing($request->get('book_id'))->getData()->borrowing;
-
         $create_bb = Rental::create(array_merge(
             $request->only('book_id', 'rental_date', 'promissory_date', 'user_id'),
         ));
@@ -38,11 +41,11 @@ class RentalController extends Controller
             'data' => $create_bb,
         ]);
     }
-    
+
     public function destroy($id)
     {
         $check = Rental::where('_id', $id)->count();
-        if ($check == 0 ) {
+        if ($check == 0) {
             return response()->json([
                 'status' => 'error',
                 'messenger' => 'Id mượn sách không tồn tại'
@@ -50,18 +53,17 @@ class RentalController extends Controller
         }
 
         $check_borrowing_book_delete = Rental::where('_id', $id)->delete();
-        if ($check_borrowing_book_delete == 0 ) {
+        if ($check_borrowing_book_delete == 0) {
             return response()->json([
                 'status' => 'error',
                 'messenger' => 'Xoá lượt mượn sách thất bại'
             ], 400);
         }
-        
+
         return response()->json([
             'status' => 'ok',
             'messenger' => 'Xoá lượt mượn sách thành công'
         ], 200);
-
     }
 
 

@@ -128,9 +128,9 @@ class AuthController extends Controller
         }
 
 
-        $userId = auth()->user()->id;
+        $userId = auth()->user()->_id;
 
-        $user = User::where('id', $userId)->update(
+        $user = User::where('_id', $userId)->update(
             ['password' => bcrypt($request->new_password)]
         );
 

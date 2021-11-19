@@ -10,10 +10,8 @@ use App\Http\Requests\BookRequest;
 use App\Http\Requests\BookUpdateRequest;
 use App\Models\Rental;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\File;
 use GuzzleHttp\Client;
-use SebastianBergmann\Environment\Console;
 
 class BookController extends Controller
 {
@@ -65,7 +63,7 @@ class BookController extends Controller
             ], 422);
         }
 
-        $book = Book::where('_id', $id)->with('type', 'country')->first();
+        $book = Book::where('_id', $id)->with('type', 'country')->first();        
         return $book;
     }
 
@@ -165,42 +163,29 @@ class BookController extends Controller
         if ($request->has('limit')) {
             $limit = $request->get('limit');
         }
-        //$result = Book::groupBy('type_id')->get(['publication_year', 'name']);
-        $result = Book::raw(function($collection){
-            return $collection->aggregate(array(
-                array(
-                    '$group' => array(
-                        '_id' => '$type_id',
-                        'count' => array(
-                            '$sum' => 1
-                        )
-                    )
-                )
-            ));
-        })->getDictionary();
-        $s = array_values($result);
-        //usort($s, "count");
-        //var_dump($result);
-        return $result;
         $books = Rental::select(Rental::raw('COUNT(borrowing_books.book_id) as count, borrowing_books.book_id'))
-            ->groupBy('rentals.book_id')
+            ->groupBy('borrowing_books.book_id')
             ->orderByDesc('count')
             ->limit($limit)->get();
 
-        return $books;
-    }
 
-    public function getLatestBooks(Request $request)
-    {
-        $limit = 5;
-        if ($request->has('limit')) {
-            $limit = $request->get('limit');
+        // $types = Type::all();
+        foreach ($books as $book) {
+            $bookinfo = Book::where('book_id', $book->book_id)->first();
+            $bookinfo->borrowing = Rental::where([['book_id', $book->book_id],['status_id', 1]])->count() != 0;
+
+            // $type = $this->getTypeOfBook($bookinfo, $types);
+            // $bookinfo->type = $type;
+            $book->book = $bookinfo;
         }
-        $books = Book::with('country', 'type')->filter($request->all())
-            ->orderByDesc('created_at')
-            ->limit($limit)->get();
 
-        return $books;
+        return response()->json(
+            [
+                'orderBy' => 'desc',
+                "books" => $books,
+            ],
+            200
+        );
     }
 
     public function uploadImage($urlFile, $nameFile)
@@ -240,5 +225,34 @@ class BookController extends Controller
 
         // echo json_encode($json);
         // {"type":"User"...'
+    }
+
+
+
+
+    public function filterByType(Request $request)
+    {
+        $Type = Type::where('type_id', $request->type_id)->first();
+        $types = Type::all();
+        $queue = [];
+        $arr = [];
+        array_push($arr, $Type);
+        array_push($queue, $Type);
+        while ($queue != null) {
+            $Type = array_shift($queue);
+            foreach ($types as $type) {
+                if ($type->parent_id == $Type->type_id) {
+                    array_push($queue, $type);;
+                    array_push($arr, $type);
+                }
+            }
+        }
+        $result = [];
+        foreach ($arr as $element) {
+            if ($element->level == 3) {
+                array_push($result, $element->type_id);
+            }
+        }
+        return $result;
     }
 }

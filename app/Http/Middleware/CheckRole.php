@@ -19,8 +19,8 @@ class CheckRole
     {
         $payload = auth()->payload();
         $roleId = $payload->get('role_id');
-        $codeRole = Role::where('role_id', $roleId)->value('code');
-        if ($codeRole[0] == 'U') {
+        $codeRole = Role::where('_id', $roleId)->value('name');
+        if ($codeRole[0] == 'u') {
             return response()->json([
                 [
                     'error' => 'Chỉ có admin có thể truy cập tài nguyên này',
