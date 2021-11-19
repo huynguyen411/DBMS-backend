@@ -36,8 +36,8 @@ class RentalController extends Controller
         $payload = auth()->payload();
         $user_id = $payload->get('sub');
 
-        $checkBorrowing = Rental::where('user_id', '=', $user_id)->whereNull('return_date')->count();
-        if (!$checkBorrowing){
+        $checkBorrowing = Rental::where('user_id', '=', $user_id)->where('book_id', '=', $request->book_id)->count();
+        if ($checkBorrowing != 0){
             return response()->json([
                 'status' => 'error',
                 'message' => 'trả sách đi rồi hẵng mượn',
