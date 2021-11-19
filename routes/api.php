@@ -74,7 +74,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/', [RentalController::class, 'store']);
             Route::delete('/{_id}', [RentalController::class, 'destroy']);
             Route::post('return-book/{_id}', [RentalController::class, 'returnBook']);
-            Route::post('get-history-rental/', [RentalController::class, 'getHistoryRental']);
+            Route::get('get-history-rental/', [RentalController::class, 'getHistoryRental']);
         });
     });
 
