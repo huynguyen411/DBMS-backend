@@ -7,6 +7,7 @@ use App\Models\Rental;
 use Illuminate\Http\Request;
 use App\Http\Requests\RentalRequest;
 
+use Illuminate\Support\Carbon;
 class RentalController extends Controller
 {
 
@@ -23,8 +24,7 @@ class RentalController extends Controller
         $roleId = $payload->get('role_id');
         if ($roleId == 2) {
             $rentals = Rental::with('user', 'book')->where('user_id', $user_id)->get();
-        }
-        else {
+        } else {
             $rentals = Rental::with('user', 'book')->filter($request->all())->get();
         }
         return $rentals;
@@ -33,9 +33,23 @@ class RentalController extends Controller
     // create an rental
     public function store(RentalRequest $request)
     {
+        $payload = auth()->payload();
+        $user_id = $payload->get('sub');
+
+        $date = date('m/d/Y h:i:s a', time());
+        $currentDateTime = Carbon::now();
+        $daysToAdd = 14;
+        $date = $currentDateTime->addDays($daysToAdd);
+        
         $create_bb = Rental::create(array_merge(
-            $request->only('book_id', 'rental_date', 'promissory_date', 'user_id'),
+            $request->only('book_id'),
+            [
+                'user_id' => $user_id,
+                'rental_date' => date('Y/m/d h:i:s', time()),
+                'promissory_date' => date('Y/m/d h:i:s', $date->timestamp)
+            ]
         ));
+       
         return response()->json([
             'status' => 'ok',
             'data' => $create_bb,

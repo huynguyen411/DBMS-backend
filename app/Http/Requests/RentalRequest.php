@@ -31,9 +31,6 @@ class RentalRequest extends FormRequest
     {
         return [
             'book_id' => [new CheckIdBook],
-            'rental_date' => 'required|date',
-            'promissory_date' => 'required|date|after_or_equal:from_date',
-            'user_id' => ['required', new CheckIdUser]
         ];
     }
 
