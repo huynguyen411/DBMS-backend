@@ -69,18 +69,12 @@ Route::prefix('v1')->group(function () {
         Route::get('/', [RentalController::class, 'index']); // danh sách mượn dành cho user
     });
 
-
-    //admin
-    Route::middleware(['auth', 'check-role'])->prefix('manage')->group(function () {
-        Route::get('get-user', [ManageUserController::class, 'getUser']); // danh sách user
-        Route::get('get-borrowing', [ManageUserController::class, 'getBorrowing']); // danh sách mượn
-        Route::get('statistics-borrowing-book', [ManageUserController::class, 'statisticsBorrowingBook']);
-        
+    Route::middleware(['auth'])->group(function () {        
         Route::prefix('rental-book')->group(function () {
-            
             Route::post('/', [RentalController::class, 'store']);
             Route::delete('/{_id}', [RentalController::class, 'destroy']);
-            Route::get('return-book/{_id}', [RentalController::class, 'returnBook']);
+            Route::post('return-book/{_id}', [RentalController::class, 'returnBook']);
+            Route::post('get-history-rental/', [RentalController::class, 'getHistoryRental']);
         });
     });
 

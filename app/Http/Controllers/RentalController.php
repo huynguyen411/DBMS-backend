@@ -12,11 +12,11 @@ class RentalController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['auth:api', 'check-role'], ['only' => ['returnBook', 'index']]);
+        $this->middleware(['auth:api', 'check-role'], ['only' => ['returnBook', 'index', 'delete']]);
     }
 
     //get the history rental by current user
-    public function getHistoryRental(RentalRequest $request)
+    public function getHistoryRental(Request $request)
     {
         $payload = auth()->payload();
         $user_id = $payload->get('sub');
@@ -80,10 +80,6 @@ class RentalController extends Controller
 
     public function returnBook($id)
     {
-        $checkBorrowing = Rental::where([
-            ['_id', '=', $id]
-        ])->count();
-
         $check = Rental::where([
             ['_id', '=', $id]
         ])->update(['return_date' => date('Y/m/d h:i:s', time())]);

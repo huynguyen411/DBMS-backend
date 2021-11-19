@@ -24,9 +24,6 @@ class CheckRole
             return response()->json([
                 [
                     'error' => 'Chỉ có admin có thể truy cập tài nguyên này',
-                    // 'code' => $payload,
-                    // 'role_id' => $roleId,
-                    // 'codeRole' => $codeRole
                 ],
             ], 401);
         }

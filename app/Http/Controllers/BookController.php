@@ -188,6 +188,20 @@ class BookController extends Controller
         );
     }
 
+    // lấy list book đc mượn nhiều nhất
+    public function getLatestBooks(Request $request)
+    {
+        $limit = 10;
+        if ($request->has('limit')) {
+            $limit = $request->get('limit');
+        }
+        $books = Book::with('type', 'country')
+        ->orderByDesc('publication_year')
+        ->limit($limit)->get();
+
+        return $books;
+    }
+    
     public function uploadImage($urlFile, $nameFile)
     {
         $nameFile = substr($nameFile, 0, 100);
