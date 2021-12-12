@@ -36,34 +36,4 @@ class ManageUserController extends Controller
             'messenger' => 'Xoá tài khoản thành công'
         ], 200);
     }
-
-    
-    public function getBorrowing(Request $request)
-    {
-        $list = BorrowingBook::filter($request->all())->get();
-
-
-        foreach ($list as $key => $user) {
-            $book = Book::where('book_id', $user->book_id)->get();
-            $userinfo = User::where('id', $user->borrower_id)->get();
-            $list[$key]->book = $book;
-            $list[$key]->user = $userinfo;
-        }
-        return response()->json([
-            'borrowing' => $list,
-        ]);
-    }
-
-    public function statisticsBorrowingBook()
-    {
-        $totalBorrowingBook = BorrowingBook::all()->count();
-        $countBorrowingBook = BorrowingBook::where('status_id', 1)->count();
-        $countReturnBook = BorrowingBook::where('status_id', 2)->count();
-
-        return response()->json([
-            'totalBorrowingBook' => $totalBorrowingBook,
-            'countBorrowingBook' => $countBorrowingBook,
-            'countReturnBook' => $countReturnBook,
-        ]);
-    }
 }

@@ -11,7 +11,7 @@ class Rental extends Model
     use Filterable;
     use HasFactory;
     protected $collection = 'rentals';
-    protected $fillable = ['book_id', 'user_id', 'rental_date', 'return_date', 'promissory_date'];
+    protected $fillable = ['book_id', 'user_id', 'rental_date', 'return_date', 'promissory_date', 'is_returned'];
     public $timestamps = false;
 
 

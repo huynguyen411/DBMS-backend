@@ -16,7 +16,6 @@ class Book extends Model
     public function type(){
         return $this->belongsTo(Type::class);
     }
-
     public function country()
     {
         return $this->belongsTo(Country::class);

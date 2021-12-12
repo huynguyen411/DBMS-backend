@@ -55,7 +55,8 @@ class RentalController extends Controller
                 'user_id' => $user_id,
                 'rental_date' => date('Y/m/d h:i:s', time()),
                 'promissory_date' => date('Y/m/d h:i:s', $date->timestamp),
-                'return_date' => null
+                'return_date' => null,
+                'is_returned' => false
             ]
         ));
        
@@ -105,7 +106,11 @@ class RentalController extends Controller
     {
         $check = Rental::where([
             ['_id', '=', $id]
-        ])->update(['return_date' => date('Y/m/d h:i:s', time())]);
+        ])->update(
+            [
+                'return_date' => date('Y/m/d h:i:s', time()),
+                'is_returned' => true
+            ]);
 
         if (!$check) {
             return response()->json([
